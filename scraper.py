@@ -7,6 +7,16 @@
 # Distributed under terms of the MIT license.
 
 """ eztv.io scraper """
+
+def check_dependencies(exe):
+    try:
+        __import__(exe)
+    except ImportError:
+        print(f"Trying to Install required module: {exe}\n")
+        os.system(f'python3 -m pip install {exe}')
+
+
+
 # Dependency Check
 check_dependencies('requests')
 check_dependencies('inquirer')
@@ -26,16 +36,6 @@ HOME_LINK = settings.HOME_LINK
 DOWNLOAD_LINK = settings.DOWNLOAD_LINK
 TITLE_CLASS = settings.TITLE_CLASS
 YEAR_CLASS = settings.YEAR_CLASS
-
-
-def check_dependencies(exe):
-    try:
-        __import__(exe)
-    except ImportError:
-        print(f"Trying to Install required module: {exe}\n")
-        os.system(f'python3 -m pip install {exe}')
-
-
 
 
 def get_show(query):

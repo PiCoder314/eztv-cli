@@ -7,13 +7,19 @@
 # Distributed under terms of the MIT license.
 
 """ eztv.io scraper """
-# Custom Modules
-from requests import get
+# Dependency Check
+check_dependencies('requests')
+check_dependencies('inquirer')
+check_dependencies('bs4')
+check_dependencies('html5lib')
+# Pip Modules
+import requests
 import inquirer
 from bs4 import BeautifulSoup
 import re
 import settings
 import os
+import sys
 # Global Variables
 SEARCH_LINK = settings.SEARCH_LINK
 HOME_LINK = settings.HOME_LINK
@@ -30,19 +36,21 @@ def check_dependencies(exe):
         os.system(f'python3 -m pip install {exe}')
 
 
-# Dependency Check
-check_dependencies('requests')
-check_dependencies('inquirer')
-check_dependencies('bs4')
-check_dependencies('html5lib')
-# Pip Modules
 
 
 def get_show(query):
     PROXIES = settings.PROXIES
     print("Getting Data...")
 
-    response = get(SEARCH_LINK.replace('{query}', query), proxies=PROXIES)
+    try:
+        response = requests.get(SEARCH_LINK.replace('{query}', query), proxies=PROXIES)
+    except requests.exceptions.ProxyError:
+        print('ProxyError please try again later.\nWe recommend to use a VPN.')
+        sys.exit(1)
+    except requests.exceptions.ConnectionError:
+        print('Use the proxy flag or a VPN')
+        sys.exit(1)
+
     html = response.text
 
     soup = BeautifulSoup(html, 'html5lib')
@@ -91,7 +99,14 @@ def get_show(query):
 def get_downloads(link, show):
     PROXIES = settings.PROXIES
 
-    response = get(link, proxies=PROXIES)
+    try:
+        response = requests.get(link, proxies=PROXIES)
+    except requests.exceptions.ProxyError:
+        print('ProxyError please try again later.\nWe recommend to use a VPN.')
+        sys.exit(1)
+    except requests.exceptions.ConnectionError:
+        print('Use the proxy flag or a VPN')
+        sys.exit(1)
     html = response.text
 
     soup = BeautifulSoup(html, 'html5lib')
@@ -110,8 +125,15 @@ def get_downloads(link, show):
 def open_torrent(link):
     PROXIES = settings.PROXIES
     with open('tmp.torrent', 'wb+') as file:
-        file.write(get(link, proxies=PROXIES).content)
-    os.system('xdg-open tmp.torrent')
+        try:
+            file.write(requests.get(link, proxies=PROXIES).content)
+        except requests.exceptions.ProxyError:
+            print('ProxyError please try again later.\nWe recommend to use a VPN.')
+            sys.exit(1)
+        except requests.exceptions.ConnectionError:
+            print('Use the proxy flag or a VPN')
+            sys.exit(1)
+    os.system('settings.OPEN_COMMAND')
 
 
 def main():

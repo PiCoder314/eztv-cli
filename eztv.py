@@ -18,7 +18,7 @@ import inquirer
 def main():
     try:
         args = sys.argv[1:]
-        opts, args = getopt.getopt(args, 'hq:pd', ['query=', 'use-proxy'])
+        opts, args = getopt.getopt(args, 'hq:pcd', ['query=', 'use-proxy', 'use-cli'])
         for opt, arg in opts:
             if opt in ('-h', '--help'):
                 print('usage: ./main.py [query] [options]\noptions\n-q, --query= : movie to search for\n-p,--use-proxy : use anonymous proxy')
@@ -30,6 +30,8 @@ def main():
                         'http': 'http://35.236.147.162:80',
                         'https': 'https://103.224.5.5:54143'
                         }
+            if opt in ('-c', '--use-cli'):
+                settings.OPEN_COMMAND = 'aria2c tmp.torrent'
 
     except getopt.GetoptError:
         print('usage: ./main.py [query] [options]\noptions\n-q, --query= : movie to search for\n-p,--use-proxy: use anonymous proxy')

@@ -1,13 +1,13 @@
 # eztv-cli
-> Free movies for everyone.
+> Free TV-Shows for everyone.
 
 An unofficial CLI client for eztv.io torrents.
 
 Made by PiCoder314.
 
 ## Coming Soon
-+ New Movies
-+ Popular Movies
++ New TV Shows.
++ Popular TV Shows.
 + Filter
 + Trakt TV Authorization
 
@@ -36,11 +36,17 @@ sh -c "curl -fsSL https://github.com/PiCoder314/eztv-cli/archive/master.zip -o m
 ```
 ## Usage
 
-```sh
+```markdown
+
+## Installation
 
 chmod u+x yts.py
 
+## Usage
+
 ./eztv.py --query=<search-term> <options>
+
+## Options
 
 -q, --query= : Movie to search for.
 

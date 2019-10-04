@@ -52,6 +52,8 @@ chmod u+x yts.py
 
 -p, --use-proxy : Use anonymous proxy.
 
+-c, --use-cli : Use aria2 to download torrent.
+
 ```
 
 

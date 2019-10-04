@@ -62,7 +62,7 @@ def get_show(query):
 
     tv_info['id'] =  tuple(map(lambda x: re.search('[sS]{1}[0-9]+[eE]{1}[0-9]+|$', x.string).group(), tags))
 
-    tv_info['quality'] =  tuple(map(lambda x: re.search('720p|360p|480p|1080p|$', x.string).group(), tags))
+    tv_info['quality'] =  tuple(map(lambda x: re.search('720p|360p|480p|1080p|x265|x264|$', x.string).group(), tags))
 
     tv_info['seasons'] = tuple(map(lambda x: x[1:3], tv_info['id']))
 
@@ -91,7 +91,7 @@ def get_show(query):
         show['provider'] = show['name'][show['name'].index(show['quality'])+5:].replace('[eztv]', '')
 
     for show in shows:
-        show['name'] = show['name'][0:show['name'].index(show['id'])-1]
+        show['name'] = show['name'][0:show['name'].index(show['id'])-1].capitalize()
 
     return shows
 
@@ -114,9 +114,7 @@ def get_downloads(link, show):
     links = soup.find_all('a',
             attrs={
                 "class": re.compile("download_[12]"),
-                "title": re.compile(f".*{show['name']}.*{show['id']}.*{show['provider']}.*")
-                })
-    
+                "title": re.compile(f".*{show['name']}.*{show['id']}.*{show['provider']}.*", re.IGNORECASE)})
     links = [link.get('href') for link in links]
             
     return links
@@ -133,7 +131,7 @@ def open_torrent(link):
         except requests.exceptions.ConnectionError:
             print('Use the proxy flag or a VPN')
             sys.exit(1)
-    os.system('settings.OPEN_COMMAND')
+    os.system(settings.OPEN_COMMAND)
 
 
 def main():

@@ -39,6 +39,8 @@ def main():
     if 'query' not in locals():
         query = input('Enter movie name: ')
 
+    query = query.replace(' ', '-')
+
     # Getting TV Shows
 
     print(f"Searching for {query}...")
@@ -68,6 +70,9 @@ def main():
         answer = answers['show']
     else:
         answer = u_shows[0]
+
+
+    print("Show:", answer)
         
 
     # Filter by choosen name
@@ -88,6 +93,8 @@ def main():
     answers = inquirer.prompt(questions)
     answer = answers['season']
 
+    print("Season:", answer)
+
     # Filter by season
     shows = [show for show in shows if show['season'] == answer]
     episodes = [show['episode'] for show in shows]
@@ -103,6 +110,8 @@ def main():
 
     answers = inquirer.prompt(questions)
     answer = answers['episode']
+
+    print("Episode:", answer)
 
     # Filter by episodes
     shows = [show for show in shows if show['episode'] == answer]
@@ -128,6 +137,8 @@ def main():
     else:
         answer = u_qualities[0]
 
+    print("Quality:", answer)
+
     # Filter by quality
     shows = [show for show in shows if show['quality'] == answer]
     # Get providers
@@ -146,6 +157,9 @@ def main():
         answer = answers['provider']
     else:
         answer = providers[0]
+
+
+    print("Provider:", answer)
 
     # Filter by provider
     shows = [show for show in shows if show['provider'] == answer]

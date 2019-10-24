@@ -13,6 +13,7 @@ import settings
 import getopt
 import scraper
 import inquirer
+import itertools
 
 
 def main():
@@ -80,12 +81,18 @@ def main():
 
     # Get seasons
     seasons = [show['season'] for show in shows]
+
+    # Filter out duplicates
+    u_seasons = []
+    for show in shows:
+        if show['season'] not in u_seasons:
+            u_seasons.append(show['season'])
     print("Choose a season to download")
 
     questions = [
             inquirer.List('season',
                 '==> ',
-                range(min(seasons), max(seasons)+1),
+                u_seasons,
                 carousel=True
                 )
             ]
@@ -97,13 +104,18 @@ def main():
 
     # Filter by season
     shows = [show for show in shows if show['season'] == answer]
-    episodes = [show['episode'] for show in shows]
+
+    # Filter out duplicates
+    u_episodes = []
+    for show in shows:
+        if show['episode'] not in u_episodes:
+            u_episodes.append(show['episode'])
     print("Choose an episode to download")
 
     questions = [
             inquirer.List('episode',
                 '==> ',
-                range(min(episodes), max(episodes)+1),
+                u_episodes,
                 carousel=True
                 )
             ]
@@ -143,15 +155,20 @@ def main():
     shows = [show for show in shows if show['quality'] == answer]
     # Get providers
     providers = [show['provider'] for show in shows]
+    sizes = [show['size'] for show in shows]
+    lst = list()
+    print(providers, sizes)
+    for p, s in itertools.zip_longest(providers, sizes):
+        lst.append(f"{p} ({s})")
 
     if len(providers) > 1:
         print("Choose a provider to download from")
         questions = [
-        inquirer.List('provider',
-        '==> ',
-        providers,
-        carousel=True
-        )
+            inquirer.List('provider',
+                '==> ',
+            lst,
+            carousel=True
+            )
         ]
         answers = inquirer.prompt(questions)
         answer = answers['provider']
@@ -162,13 +179,16 @@ def main():
     print("Provider:", answer)
 
     # Filter by provider
-    shows = [show for show in shows if show['provider'] == answer]
+    for show in shows:
+        x = f"{show['provider']} ({show['size']})"
+        if x == answer:
+            shows = [show,]
     # Get first show
     show = shows[0]
 
     # Get download links if available
     print('Getting Download Links...')
-    links = scraper.get_downloads(f"https://eztv.io/search/{query}", show)
+    links = scraper.get_downloads(f"https://eztv.unblocked.ltda/search/{query}", show)
 
     if len(links) > 1:
         print("Choose a mirror to download from?")

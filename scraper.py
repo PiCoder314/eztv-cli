@@ -53,7 +53,7 @@ def get_show(query):
 
     html = response.text
 
-    soup = BeautifulSoup(html, 'html5lib')
+    soup = BeautifulSoup(html, 'lxml')
     tv_info = {}
 
     tags = soup.find_all(name='a',
@@ -68,6 +68,13 @@ def get_show(query):
 
     tv_info['episodes'] = tuple(map(lambda x: x[4:6], tv_info['id']))
 
+    links = soup.find_all('a',
+            attrs={
+                "class": re.compile("epinfo")
+                })
+
+    tv_info['sizes'] = [link.get('title')[link.get('title').find("(")+1:link.get('title').find(")")] for link in links]
+
     shows = list()
 
     for i, _ in enumerate(tv_info['id']):
@@ -77,11 +84,13 @@ def get_show(query):
             "name": tags[i].string,
             "season": tv_info['seasons'][i],
             "episode": tv_info['episodes'][i],
-            "quality": tv_info['quality'][i]
+            "quality": tv_info['quality'][i],
+            "size": tv_info['sizes'][i]
             })
 
     shows = [show for show in shows if show['id']]
     shows = [show for show in shows if show['quality']]
+    shows = [show for show in shows if show['size']]
 
     for show in shows:
         show['season'] = int(show['season'])
@@ -91,7 +100,7 @@ def get_show(query):
         show['provider'] = show['name'][show['name'].index(show['quality'])+5:].replace('[eztv]', '')
 
     for show in shows:
-        show['name'] = show['name'][0:show['name'].index(show['id'])-1].capitalize()
+        show['name'] = show['name'][0:show['name'].index(show['id'])-1].title()
 
     return shows
 
@@ -109,7 +118,7 @@ def get_downloads(link, show):
         sys.exit(1)
     html = response.text
 
-    soup = BeautifulSoup(html, 'html5lib')
+    soup = BeautifulSoup(html, 'lxml')
 
     links = soup.find_all('a',
             attrs={
@@ -118,6 +127,9 @@ def get_downloads(link, show):
     links = [link.get('href') for link in links]
             
     return links
+
+
+
 
 
 def open_torrent(link):

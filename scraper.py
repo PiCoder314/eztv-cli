@@ -8,6 +8,11 @@
 
 """ eztv.io scraper """
 
+import re
+import settings
+import os
+import sys
+
 def check_dependencies(exe):
     try:
         __import__(exe)
@@ -26,10 +31,6 @@ check_dependencies('html5lib')
 import requests
 import inquirer
 from bs4 import BeautifulSoup
-import re
-import settings
-import os
-import sys
 # Global Variables
 SEARCH_LINK = settings.SEARCH_LINK
 HOME_LINK = settings.HOME_LINK
